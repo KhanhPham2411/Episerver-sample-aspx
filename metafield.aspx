@@ -43,7 +43,7 @@
                 { McDataTypeAttribute.BooleanLabel, friendlyName },
                 { McDataTypeAttribute.EnumEditable, true }
             };
-            metaClass.CreateMetaField(name, friendlyName, typeName, attributes);
+            metaClass.CreateMetaField(name, friendlyName, typeName, attributes); // DeleteMetaField
 
             using (var myEditScope = DataContext.Current.MetaModel.BeginEdit())
             {
