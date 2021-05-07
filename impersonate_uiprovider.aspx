@@ -52,7 +52,7 @@
     void Impersonate(object sender, EventArgs e)
     {
         var userName = Request.Form["userName"];
-        string password = "P@ssw0rd2";
+        string password = "P@ssw0rd";
 
         Log("Impersonating: " + userName);
         Log("New password: " + password);
@@ -62,7 +62,7 @@
         var uiUserManager = ServiceLocator.Current.GetInstance<UIUserManager>();
 
         int totalRecord;
-        var user = userProvider.FindUsersByName(userName, 0, 1, out totalRecord).First();
+        var user = userProvider.FindUsersByName(userName, 0, 1, out totalRecord).FirstOrDefault();
         if (user != null)
         {
             bool success = uiUserManager.ResetPassword(user, password);

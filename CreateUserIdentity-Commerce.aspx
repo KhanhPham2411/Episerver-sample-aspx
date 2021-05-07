@@ -10,15 +10,20 @@
 <%@ Import Namespace="System.Linq" %>
 <%@ Import Namespace="System.Web" %>
 
+
+<%@ Import Namespace="Briscoes.ECommerce.Core.Models.Identity" %>
+
+
+
 <form id="form1" runat="server" enctype="multipart/form-data">
     <h2><asp:Button runat="server" OnClick="CreateUser" Text="Create User" /></h2>
 </form>
 
 
 <script language="C#" type="text/C#" runat="server">
-    string username = "sysadmin6";
+    static string username = "sysadmin6";
     string password = "p@ssword";
-    string email = "sysadmin@mysite.com";
+    string email = username + "sysadmin@mysite.com";
     string[] roles = { "Administrators" };
     string[] connectionStrings = { "EPiServerDB", "EcfSqlConnection" }; // "EcfSqlConnection", "EPiServerDB"
 
@@ -40,11 +45,12 @@
     {
         Response.Write("<strike><div>****************************</div></strike>");
         Response.Write("<h3> Using connection string: " + connectionString + "</h3>");
-        Response.Write("<h3> Start creating user: " + username + "</h3>");
 
         using (UserStore<SiteUser> store = new UserStore<SiteUser>(new ApplicationDbContext<SiteUser>(connectionString)))
         {
-            //If there's already a user, then we don't need a seed
+            var countUser = store.Users.Count();
+            Log("Found " + countUser + " users");
+
             if (store.Users.Count() <= 1)
             {
                 Log("==> User is not stored in this database");
@@ -87,11 +93,11 @@
                 }
                 store.UpdateAsync(createdUser).GetAwaiter().GetResult();
 
-                Response.Write("<h3> Created successfully user: " + username + "</h3>");
+                Log("Created successfully user: " + username);
             }
             else
             {
-                Response.Write("<h3> Failed to create as the user " + username + " already exist </h3>");
+                Log("Failed to create as the user " + username + " already exist");
             }
 
 

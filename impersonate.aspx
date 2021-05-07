@@ -13,6 +13,10 @@
 <%@ Import Namespace="Microsoft.AspNet.Identity.Owin" %>
 
 
+<%@ Import Namespace="Briscoes.ECommerce.Core.Models.Identity" %>
+
+
+
 <form id="form1" runat="server" enctype="multipart/form-data">
     <h2>
         <input type="text" id="userNameToMatch" name="userNameToMatch" />
