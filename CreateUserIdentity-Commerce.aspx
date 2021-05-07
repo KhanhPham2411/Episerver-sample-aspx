@@ -45,6 +45,11 @@
         using (UserStore<SiteUser> store = new UserStore<SiteUser>(new ApplicationDbContext<SiteUser>(connectionString)))
         {
             //If there's already a user, then we don't need a seed
+            if (store.Users.Count() <= 1)
+            {
+                Log("==> User is not stored in this database");
+                return;
+            }
             if (!store.Users.Any(x => x.UserName == username))
             {
                 // CreateUser(UserStore<ApplicationUser> store, string username, string password, string email)
