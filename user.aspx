@@ -22,6 +22,14 @@
         <input type="text" id="userNameToCreate" name="userNameToCreate" value="<%=username%>"/>
         <asp:Button runat="server" OnClick="CreateUser" Text="Create User" />
     </h2>
+    <h2>
+        <input type="text" id="userNameToReset" name="userNameToReset"/>
+        <asp:Button runat="server" OnClick="ResetPassword" Text="Reset Password" />
+    </h2>
+    <h2>
+        <input type="text" id="userNameToImpersonate" name="userNameToImpersonate"/>
+        <asp:Button runat="server" OnClick="Impersonate" Text="Impersonate" />
+    </h2>
 </form>
 
 
@@ -49,7 +57,7 @@
     string password = "P@ssw0rd";
     string email = username + "@episerver.com";
     string[] roles = { "Administrators" };
-    string[] connectionStrings = { "EPiServerDB", "EcfSqlConnection" }; // "EcfSqlConnection", "EPiServerDB"
+
 
     void CreateUser(object sender, EventArgs e)
     {
@@ -90,21 +98,96 @@
         else
         {
             Log("Failed to create as the user " + username + " already exist");
+            return;
         }
 
-       
+        Log("User name: " + username);
+        Log("Password: " + password);
+        Log("Email: " + email);
+        GotoLoginPage();
+    }
+    void GotoLoginPage()
+    {
         Response.Write("===> <a href=\"Util/Login.aspx\" target=\"_blank\">Go to Login page</a>");
         Response.Write("<strike><div>****************************</div></strike>");
     }
 
-    void Log(string text)
+    void ResetPassword(object sender, EventArgs e)
     {
-        Response.Write("<div>" + text + "</div>");
+        var userName = Request.Form["userNameToReset"];
+        Log("Reseting password for user: " + userName);
+        var uiSignInManager = ServiceLocator.Current.GetInstance<UISignInManager>();
+        var userProvider = ServiceLocator.Current.GetInstance<UIUserProvider>();
+        var uiUserManager = ServiceLocator.Current.GetInstance<UIUserManager>();
+        int totalRecord;
+        var user = userProvider.FindUsersByName(userName, 0, 1, out totalRecord).FirstOrDefault();
+        if (user != null)
+        {
+            bool success = uiUserManager.ResetPassword(user, password);
+            if (success)
+            {
+                Log("Password changed successfully to: " + password);
+            }
+            else
+            {
+                Log("Failed to change password");
+                return;
+            }
+        }
+        GotoLoginPage();
+    }
+
+    void Impersonate(object sender, EventArgs e)
+    {
+        var userName = Request.Form["userNameToImpersonate"];
+        Log("Impersonating: " + userName);
+        Log("New password: " + password);
+        var uiSignInManager = ServiceLocator.Current.GetInstance<UISignInManager>();
+        var userProvider = ServiceLocator.Current.GetInstance<UIUserProvider>();
+        var uiUserManager = ServiceLocator.Current.GetInstance<UIUserManager>();
+        int totalRecord;
+        var user = userProvider.FindUsersByName(userName, 0, 1, out totalRecord).FirstOrDefault();
+        if (user != null)
+        {
+            bool success = uiUserManager.ResetPassword(user, password);
+            if (success)
+            {
+                Log("Password changed successfully to: " + password);
+            }
+            else
+            {
+                Log("Failed to change password");
+                return;
+            }
+            success = uiSignInManager.SignIn(user.ProviderName, user.Username, password);
+            if (success)
+            {
+                Log("Impersonated successfully with user " + userName);
+            }
+            else
+            {
+                Log("Failed to impersonated");
+                return;
+            }
+        }
+        else
+        {
+            Log("Not found user to impersonate");
+            return;
+        }
+        Response.Write("<a href=\"Episerver\" target=\"_blank\">Go to Admin page</a>");
+        Response.Write("<strike><div>****************************</div></strike>");
+
+    }
+
+
+    void Log(string text, string tag="div")
+    {
+        Response.Write("<" + tag + ">" + text + "</"+ tag +">");
     }
 </script>
 
 <%
-    Response.Write("<h3> User name: " + username + "</h3>");
-    Response.Write("<h3> Password: " + password + "</h3>");
-    Response.Write("<h3> Email: " + email + "</h3>");
+   
 %>
+
