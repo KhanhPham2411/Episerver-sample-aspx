@@ -22,6 +22,7 @@
 
 <%@ Import Namespace="EPiServer.Commerce.Order" %>
 <%@ Import Namespace="EPiServer.ServiceLocation" %>
+<%@ Import Namespace="Mediachase.Commerce.Orders" %>
 
 
 <form id="form1" runat="server" enctype="multipart/form-data">
@@ -36,6 +37,10 @@
     <h2>
         <input placeholder="orderGroupId - 365086" type="text" id="orderGroupIdToDelete" name="orderGroupIdToDelete" />
         <asp:Button runat="server" OnClick="DeleteOrder" Text="Delete Order" />
+    </h2>
+    <h2>
+        <input placeholder="" type="text" id="keywordToSearch" name="keywordToSearch" />
+        <asp:Button runat="server" OnClick="SearchOrder" Text="Search Order" />
     </h2>
 </form>
 
@@ -64,6 +69,10 @@
         var order = orderRepository.Load<IPurchaseOrder>(orderGroupId);
 
         orderRepository.Delete(order.OrderLink);
+    }
+    void SearchOrder(object sender, EventArgs e)
+    {
+       var result = OrderContext.Current.FindPurchaseOrdersByStatus(OrderStatus.InProgress);
     }
 
     void Log(string text)
