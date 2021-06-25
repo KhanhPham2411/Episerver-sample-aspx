@@ -4,20 +4,23 @@
 <%@ Import Namespace="EPiServer.Framework" %>
 <%@ Import Namespace="EPiServer.Framework.Initialization" %>
 
+
 <%
-    var mu = Membership.GetUser("EpiSQLAdmin");
+    var user = "EpiSQLAdmin8";
+    var mu = Membership.GetUser(user);
 
     if (mu != null) return;
-
     try
     {
-        Membership.CreateUser("EpiSQLAdmin", "P@ssw0rd", "EpiSQLAdmin@site.com");
+        Membership.CreateUser(user, "P@ssw0rd", user + "@site.com");
 
         try
         {
+            if (!Roles.RoleExists("Administrators"))
+                Roles.CreateRole("Administrators");
 
-            Roles.AddUserToRoles("EpiSQLAdmin", 
-                new[] {"Administrators", "WebAdmins", "WebEditors" });
+
+            Roles.AddUserToRoles(user, new[] { "Administrators" });
             Response.Write("created successfully");
         }
         catch (ProviderException pe)
