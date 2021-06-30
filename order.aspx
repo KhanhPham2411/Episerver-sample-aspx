@@ -59,7 +59,7 @@
         orderGroup.MarketName = marketName;
         var orderReference = orderRepository.Save(orderGroup);
 
-        // load again
+        // load again for testing
         orderGroup = orderRepository.Load<IPurchaseOrder>(orderReference.OrderGroupId);
         Log("Market name changed to " + marketName);
     }
