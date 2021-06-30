@@ -61,7 +61,7 @@
 
         // load again for testing
         orderGroup = orderRepository.Load<IPurchaseOrder>(orderReference.OrderGroupId);
-        Log("Market name changed to " + marketName);
+        Log("Market name changed to " + orderGroup.MarketName);
     }
     void LoadOrder(object sender, EventArgs e)
     {
