@@ -27,6 +27,10 @@
 
 <form id="form1" runat="server" enctype="multipart/form-data">
     <h2>
+        <input placeholder="orderGroupId - 365086" type="text" id="orderGroupIdToUpdate" name="orderGroupIdToUpdate" />
+        <asp:Button runat="server" OnClick="UpdateOrder" Text="Update Order with market name" />
+        <input value="test" type="text" id="marketName" name="marketName" />
+    </h2><h2>
         <input placeholder="orderGroupId - 365086" type="text" id="orderGroupIdToLoad" name="orderGroupIdToLoad" />
         <asp:Button runat="server" OnClick="LoadOrder" Text="Load Order" />
     </h2>
@@ -45,6 +49,20 @@
 </form>
 
 <script language="C#" type="text/C#" runat="server">
+    void UpdateOrder(object sender, EventArgs e)
+    {
+        var orderRepository = ServiceLocator.Current.GetInstance<IOrderRepository>();
+        int orderGroupId = int.Parse(Request.Form["orderGroupIdToUpdate"]);
+        string marketName = Request.Form["marketName"];
+
+        var orderGroup = orderRepository.Load<IPurchaseOrder>(orderGroupId);
+        orderGroup.MarketName = marketName;
+        var orderReference = orderRepository.Save(orderGroup);
+
+        // load again
+        orderGroup = orderRepository.Load<IPurchaseOrder>(orderReference.OrderGroupId);
+        Log("Market name changed to " + marketName);
+    }
     void LoadOrder(object sender, EventArgs e)
     {
         var orderRepository = ServiceLocator.Current.GetInstance<IOrderRepository>();
