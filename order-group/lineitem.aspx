@@ -31,6 +31,10 @@
         <%--<input placeholder="" type="text" id="orderGroupIdToUpdate" name="orderGroupIdToUpdate" />--%>
         <asp:Button runat="server" OnClick="CreateLineItem" Text="Create Line Item" />
     </h2>
+     <h2>
+        <%--<input placeholder="" type="text" id="orderGroupIdToUpdate" name="orderGroupIdToUpdate" />--%>
+        <asp:Button runat="server" OnClick="CreateDoubleLineItem" Text="Create Double Line Item" />
+    </h2>
 </form>
 
 <script language="C#" type="text/C#" runat="server">
@@ -54,6 +58,30 @@
         AddLineItem(cart, "SKU-36127195");
         LogLineItemId(cart);
     }
+    void CreateDoubleLineItem(object sender, EventArgs e)
+    {
+        var orderRepository = ServiceLocator.Current.GetInstance<IOrderRepository>();
+        var orderGroupFactory = ServiceLocator.Current.GetInstance<IOrderGroupFactory>();
+        var currentMarket = ServiceLocator.Current.GetInstance<ICurrentMarket>();
+
+        ICart cart = orderRepository.LoadOrCreateCart<ICart>(CustomerContext.Current.CurrentContactId, "Default", currentMarket);
+        if (cart != null)
+        {
+            orderRepository.Delete(cart.OrderLink);
+        }
+
+        cart = orderRepository.LoadOrCreateCart<ICart>(CustomerContext.Current.CurrentContactId, "Default", currentMarket);
+        var tempLineItems = new List<ILineItem>();
+        tempLineItems.Add(LoadLineItem(cart, "SKU-36127195"));
+        tempLineItems.Add(LoadLineItem(cart, "SKU-44477844"));
+        Log(string.Join(" ", tempLineItems.Select(item => item.LineItemId)));
+        tempLineItems.ForEach(x => cart.AddLineItem(x));
+
+        AddLineItem(cart, "SKU-39850363");
+        RemoveFirstLineItem(cart);
+        AddLineItem(cart, "SKU-36127195");
+        LogLineItemId(cart);
+    }
 
     void RemoveFirstLineItem(ICart cart)
     {
@@ -67,6 +95,13 @@
             shipment.LineItems.Clear();
         }
     }
+    ILineItem LoadLineItem(ICart cart, string code)
+    {
+        var lineItem = cart.CreateLineItem(code);
+        lineItem.Quantity = 1;
+
+        return lineItem;
+    }
     void AddLineItem(ICart cart, string code)
     {
         var lineItem = cart.CreateLineItem(code);
@@ -74,7 +109,7 @@
         cart.AddLineItem(lineItem);
     }
     void LogLineItemId(ICart cart)
-    { 
+    {
         Log(string.Join(" ", cart.GetAllLineItems().Select(item => item.LineItemId)));
     }
 
