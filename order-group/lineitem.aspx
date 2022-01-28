@@ -74,12 +74,7 @@
         var tempLineItems = new List<ILineItem>();
         tempLineItems.Add(LoadLineItem(cart, "SKU-36127195"));
         tempLineItems.Add(LoadLineItem(cart, "SKU-44477844"));
-        Log(string.Join(" ", tempLineItems.Select(item => item.LineItemId)));
         tempLineItems.ForEach(x => cart.AddLineItem(x));
-
-        AddLineItem(cart, "SKU-39850363");
-        RemoveFirstLineItem(cart);
-        AddLineItem(cart, "SKU-36127195");
         LogLineItemId(cart);
     }
 
