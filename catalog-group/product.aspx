@@ -73,6 +73,25 @@
         var _contentRepository = ServiceLocator.Current.GetInstance<IContentRepository>();
 
         var rootLink = _referenceConverter.GetRootLink();
+        var catalog = _contentRepository.GetChildren<CatalogContent>(rootLink).First();
+
+        GenericProduct product = _contentRepository.GetDefault<GenericProduct>(catalog.ContentLink);
+        product.Code = "sample_product";
+        product.Name = "Sample product";
+        product.DisplayName = "Sample product";
+        product.IsPendingPublish = false;
+        product.StopPublish = DateTime.Today.AddYears(10);
+
+        var products = new List<CatalogContentBase> { product };
+        _contentRepository.Publish(products);
+    }
+
+    void CreateOrUpdateBatchProduct(object sender, EventArgs e)
+    {
+        var _referenceConverter = ServiceLocator.Current.GetInstance<ReferenceConverter>();
+        var _contentRepository = ServiceLocator.Current.GetInstance<IContentRepository>();
+
+        var rootLink = _referenceConverter.GetRootLink();
         var catalog = _contentRepository
             .GetChildren<CatalogContent>(rootLink)
             .First();
@@ -96,17 +115,8 @@
         product.IsPendingPublish = false;
         product.StopPublish = DateTime.Today.AddYears(10);
 
-        var useBatchApi = true;
-
-        if (useBatchApi)
-        {
-            var products = new List<CatalogContentBase> { product };
-            _contentRepository.Publish(products, PublishAction.SyncDraft);
-        }
-        else
-        {
-            _contentRepository.Save(product, SaveAction.Publish, AccessLevel.NoAccess);
-        }
+        var products = new List<CatalogContentBase> { product };
+        _contentRepository.Publish(products, PublishAction.SyncDraft);
     }
 
     void PutProduct(object sender, EventArgs e)
