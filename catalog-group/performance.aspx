@@ -2,8 +2,8 @@
 <%@ Page Language="C#" AutoEventWireup="true" %>
 
 <%@ Import Namespace="System.Diagnostics" %>
+<%@ Import Namespace="System.Linq" %>
 <%@ Import Namespace="EPiServer.Commerce.Extensions" %>
-<%@ Import Namespace=" Foundation.Features.CatalogContent.Product" %>
 <%@ Import Namespace="EPiServer.ServiceLocation" %>
 <%@ Import Namespace="Mediachase.Commerce.Catalog" %>
 <%@ Import Namespace="EPiServer" %>
@@ -11,6 +11,9 @@
 <%@ Import Namespace="EPiServer.DataAccess" %>
 <%@ Import Namespace="EPiServer.Security" %>
 <%@ Import Namespace="EPiServer.Commerce.Catalog.ContentTypes" %>
+<%@ Import Namespace="EPiServer.Commerce.Catalog.Provider.Persistence" %>
+<%@ Import Namespace="Foundation.Custom" %>
+<%@ Import Namespace="Foundation.Features.CatalogContent.Product" %>
 
 
 <form id="form1" runat="server" enctype="multipart/form-data">
@@ -53,7 +56,7 @@
         var _contentRepository = ServiceLocator.Current.GetInstance<IContentRepository>();
 
         var catalog = GetCatalog();
-        var count = 2;
+        var count = 10000;
         var products = new List<CatalogContentBase>();
 
         var stopwatch = new Stopwatch();
@@ -73,11 +76,11 @@
             products.Add(product);
         }
 
-        _contentRepository.Publish(products);
+
+        _contentRepository.BatchSave(products, CatalogContentType.CatalogEntry, PublishAction.None);
 
         stopwatch.Stop();
-        var elapsed_time = stopwatch.ElapsedMilliseconds;
-        Log($"BatchSavingProduct => elapsed_time: {elapsed_time}");
+        Log(string.Format("BatchSavingProduct => elapsed_time: {0}", stopwatch.ElapsedMilliseconds));
     }
 
     void NormalSavingProduct(object sender, EventArgs e)
@@ -108,11 +111,11 @@
             _contentRepository.Save(product, SaveAction.Publish);
 
             stopwatch2.Stop();
-            Log($"NormalSavingProduct => elapsed_time: {stopwatch2.ElapsedMilliseconds}");
+            Log(string.Format("BatchSavingProduct => elapsed_time: {0}", stopwatch2.ElapsedMilliseconds));
         }
 
         stopwatch.Stop();
-        Log($"NormalSavingProduct => elapsed_time_total: {stopwatch.ElapsedMilliseconds}");
+        Log(string.Format("BatchSavingProduct => elapsed_time: {0}", stopwatch.ElapsedMilliseconds));
     }
 
     void Log(string text)
