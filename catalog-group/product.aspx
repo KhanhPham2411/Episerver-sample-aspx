@@ -74,11 +74,12 @@
 
         var rootLink = _referenceConverter.GetRootLink();
         var catalog = _contentRepository.GetChildren<CatalogContent>(rootLink).First();
+        var guid = Guid.NewGuid().ToString();
 
         GenericProduct product = _contentRepository.GetDefault<GenericProduct>(catalog.ContentLink);
-        product.Code = "sample_product";
-        product.Name = "Sample product";
-        product.DisplayName = "Sample product";
+        product.Code = "sample_product" + guid;
+        product.Name = "Sample product" + guid;
+        product.DisplayName = "Sample product" + guid;
         product.IsPendingPublish = false;
         product.StopPublish = DateTime.Today.AddYears(10);
 

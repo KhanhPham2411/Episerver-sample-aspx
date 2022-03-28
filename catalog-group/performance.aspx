@@ -56,7 +56,7 @@
         var _contentRepository = ServiceLocator.Current.GetInstance<IContentRepository>();
 
         var catalog = GetCatalog();
-        var count = 10000;
+        var count = 100000;
         var products = new List<CatalogContentBase>();
 
         var stopwatch = new Stopwatch();
