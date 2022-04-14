@@ -23,6 +23,7 @@
 
 <form id="form1" runat="server" enctype="multipart/form-data">
     <h2><asp:Button runat="server" OnClick="AddMetaFieldCheckboxBoolean" Text="Add MetaField Checkbox Boolean" /></h2>
+    <h2><asp:Button runat="server" OnClick="DeleteMetaField" Text="Delete MetaField" /></h2>
 </form>
 
 <script language="C#" type="text/C#" runat="server">
@@ -37,7 +38,7 @@
 
         var existingField = metaClass.Fields[name];
         if (existingField == null)
-        {   
+        {
             var attributes = new Mediachase.BusinessFoundation.Data.Meta.Management.AttributeCollection
             {
                 { McDataTypeAttribute.BooleanLabel, friendlyName },
@@ -59,7 +60,68 @@
         {
             Log(String.Format("Meta field {0} is already exist in meta class {1}", name, OrganizationEntity.ClassName));
         }
+
+    }
+
+    void DeleteMetaField(object sender, EventArgs e)
+    {
+        string name = "Attends";
+        string className = OrganizationEntity.ClassName;
+        string typeName = MetaFieldType.Text;
         
+        string friendlyName = name;
+        var orgMetaClass = DataContext.Current.MetaModel.MetaClasses[className];
+        var metaClass = orgMetaClass;
+
+
+        var existingField = metaClass.Fields[name];
+        if (existingField != null)
+        {
+            metaClass.DeleteMetaField(name);
+
+            Log(String.Format("Meta field {0} is removed in meta class {1}", name, className));
+        }
+        else
+        {
+            Log(String.Format("Meta field {0} is not exist in meta class {1}", name, className));
+        }
+
+    }
+
+    void AssignMetaField() 
+    {     
+        string name = "Line3";
+        string className = AddressEntity.ClassName;
+        string typeName = MetaFieldType.Text;
+        
+        string friendlyName = name;
+        var entityMetaClass = DataContext.Current.MetaModel.MetaClasses[className];
+
+        var existingField = entityMetaClass.Fields[name];
+        if (existingField != null)
+        {
+            using (var myEditScope = DataContext.Current.MetaModel.BeginEdit())
+            {
+               IMetaFieldInstaller mcInstaller = MetaFieldType.GetInstaller(typeName);
+
+				if (mcInstaller != null)
+				{
+					// Assign Data Source
+					mcInstaller.AssignDataSource(existingField);
+
+					// Assign Validators
+					mcInstaller.AssignValidators(existingField);
+				}
+
+                myEditScope.SaveChanges();
+            }
+
+            Log(String.Format("Meta field {0} is assgined to meta class {1}", name, className));
+        }
+        else
+        {
+            Log(String.Format("Meta field {0} is not exist in meta class {1}", name, className));
+        }
     }
 
     void Log(string text)
