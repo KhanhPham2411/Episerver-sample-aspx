@@ -35,9 +35,9 @@
     {
         string decimalValue = Request.Form["decimalValue"];
 
-        Decimal result;
-        var result1 = Decimal.TryParse(decimalValue, out result) && result >= 0M;
-        var result2 = Decimal.TryParse(decimalValue, NumberStyles.Float, CultureInfo.InvariantCulture, out result) && result >= 0m;
+        decimal result;
+        var result1 = decimal.TryParse(decimalValue, out result) && result >= 0M;
+        var result2 = decimal.TryParse(decimalValue, NumberStyles.Float, CultureInfo.InvariantCulture, out result) && result >= 0m;
 
         Log("Input: " + decimalValue);
         Log("[Decimal.TryParse(decimalValue, out result) && result >= 0M] return " + result1);
