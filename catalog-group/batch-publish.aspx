@@ -2,10 +2,10 @@
 <%@ Page Language="C#" AutoEventWireup="true" %>
 
 <%@ Import Namespace="EPiServer.Commerce.Extensions" %>
-<%@ Import Namespace="EPiServer.Reference.Commerce.Site.Features.Product.Models" %>
 <%@ Import Namespace="EPiServer.ServiceLocation" %>
 <%@ Import Namespace="Mediachase.Commerce.Catalog" %>
 <%@ Import Namespace="EPiServer" %>
+<%@ Import Namespace="Foundation.Features.CatalogContent.Product" %>
 
 <form id="form1" runat="server" enctype="multipart/form-data">
     <h2><asp:Button runat="server" OnClick="PublishBatchProduct" Text="Publish Batch Product" /></h2>
@@ -20,7 +20,7 @@
         var _contentRepository = ServiceLocator.Current.GetInstance<IContentRepository>();
 
         var parent = _referenceConverter.GetContentLink("P-37008157");
-        var product = _contentRepository.Get<FashionProduct>(parent).CreateWritableClone<FashionProduct>();
+        var product = _contentRepository.Get<GenericProduct>(parent).CreateWritableClone<GenericProduct>();
     }
 
     void PublishBatchProduct(object sender, EventArgs e)
@@ -29,10 +29,10 @@
         var _contentRepository = ServiceLocator.Current.GetInstance<IContentRepository>();
 
         var parent = _referenceConverter.GetContentLink("P-37008157");
-        var product = _contentRepository.Get<FashionProduct>(parent).CreateWritableClone<FashionProduct>();
+        var product = _contentRepository.Get<GenericProduct>(parent).CreateWritableClone<GenericProduct>();
         product.Brand = "Test123456";
 
-        var list = new List<FashionProduct>();
+        var list = new List<GenericProduct>();
         list.Add(product);
         _contentRepository.Publish(list, PublishAction.SyncDraft);
     }
@@ -43,7 +43,7 @@
         var _contentRepository = ServiceLocator.Current.GetInstance<IContentRepository>();
 
         var parent = _referenceConverter.GetContentLink("P-37008157");
-        var product = _contentRepository.Get<FashionProduct>(parent).CreateWritableClone<FashionProduct>();
+        var product = _contentRepository.Get<GenericProduct>(parent).CreateWritableClone<GenericProduct>();
         product.Brand = "Test123456";
 
         _contentRepository.Publish(product);

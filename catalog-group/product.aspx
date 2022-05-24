@@ -15,6 +15,7 @@
 <form id="form1" runat="server" enctype="multipart/form-data">
     <h2><asp:Button runat="server" OnClick="PublishSingleProduct" Text="Publish Single Product" /></h2>
     <h2><asp:Button runat="server" OnClick="GetProduct" Text="Get Product" /></h2>
+    <h2><asp:Button runat="server" OnClick="UpdateProduct" Text="Update Product" /></h2>
     <h2>
         <input placeholder="productCode: P-37008157" type="text" id="productCode" name="productCode" value="P-37008157" />
         <asp:Button runat="server" OnClick="PutProduct" Text="Put Product" />
@@ -42,6 +43,18 @@
         Log(product.ContentGuid.ToString());
     }
 
+    void UpdateProduct(object sender, EventArgs e)
+    {
+        var _referenceConverter = ServiceLocator.Current.GetInstance<ReferenceConverter>();
+        var _contentRepository = ServiceLocator.Current.GetInstance<IContentRepository>();
+
+        var productLink = _referenceConverter.GetContentLink("P-42518256");
+        var productToUpdate = _contentRepository.Get<GenericProduct>(productLink).CreateWritableClone<GenericProduct>();
+        productToUpdate.Name = "[Updated]" + productToUpdate.Name;
+
+        _contentRepository.Save(productToUpdate, SaveAction.Publish);
+    }
+
     void PublishSingleProduct(object sender, EventArgs e)
     {
         var _referenceConverter = ServiceLocator.Current.GetInstance<ReferenceConverter>();
@@ -55,6 +68,26 @@
     }
 
     void CreateBatchProduct(object sender, EventArgs e)
+    {
+        var _referenceConverter = ServiceLocator.Current.GetInstance<ReferenceConverter>();
+        var _contentRepository = ServiceLocator.Current.GetInstance<IContentRepository>();
+
+        var rootLink = _referenceConverter.GetRootLink();
+        var catalog = _contentRepository.GetChildren<CatalogContent>(rootLink).First();
+        var guid = Guid.NewGuid().ToString();
+
+        GenericProduct product = _contentRepository.GetDefault<GenericProduct>(catalog.ContentLink);
+        product.Code = "sample_product" + guid;
+        product.Name = "Sample product" + guid;
+        product.DisplayName = "Sample product" + guid;
+        product.IsPendingPublish = false;
+        product.StopPublish = DateTime.Today.AddYears(10);
+
+        var products = new List<CatalogContentBase> { product };
+        _contentRepository.Publish(products);
+    }
+
+    void CreateOrUpdateBatchProduct(object sender, EventArgs e)
     {
         var _referenceConverter = ServiceLocator.Current.GetInstance<ReferenceConverter>();
         var _contentRepository = ServiceLocator.Current.GetInstance<IContentRepository>();
@@ -83,17 +116,8 @@
         product.IsPendingPublish = false;
         product.StopPublish = DateTime.Today.AddYears(10);
 
-        var useBatchApi = true;
-
-        if (useBatchApi)
-        {
-            var products = new List<CatalogContentBase> { product };
-            _contentRepository.Publish(products, PublishAction.SyncDraft);
-        }
-        else
-        {
-            _contentRepository.Save(product, SaveAction.Publish, AccessLevel.NoAccess);
-        }
+        var products = new List<CatalogContentBase> { product };
+        _contentRepository.Publish(products, PublishAction.SyncDraft);
     }
 
     void PutProduct(object sender, EventArgs e)
