@@ -91,38 +91,7 @@
         if (exceptions.Count > 0)
             throw new AggregateException(exceptions);
     }
-    string DoExtractArchive(string sourceFile, string sourceXmlInZip)
-    {
-        var tempDirectory = CreateTempDirectory();
 
-        var fileInfo = new FileInfo(sourceFile);
-        long target = fileInfo.Length;
-        long processed = 0;
-
-        Log("Preparing to unpack zip file.");
-        int lastProgressAtMessagePost = 0;
-        int megabyte = 1024 * 1024;
-
-        using (System.IO.Compression.ZipArchive zipFile = ZipFile.OpenRead(sourceFile))
-        {
-            foreach (var entry in zipFile.Entries)
-            {
-                if (processed - lastProgressAtMessagePost >= megabyte || processed == target)
-                {
-                    Log("Extracting zip archive ({" + processed + "}/{" + target + "} bytes)...");
-                    lastProgressAtMessagePost = (int)processed;
-                }
-
-                entry.ExtractToFile(Path.Combine(tempDirectory, entry.Name), true);
-                processed += entry.CompressedLength;
-            }
-
-        }
-        Log("Unpacked zip file in: " + tempDirectory);
-
-        // sourceFile = Path.Combine(tempDirectory, sourceXmlInZip);
-        return tempDirectory;
-    }
     string CreateTempDirectory()
     {
         var tries = 3;
