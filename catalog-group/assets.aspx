@@ -50,11 +50,12 @@
         {
             return null;
         }
-         var _urlResolver = ServiceLocator.Current.GetInstance<UrlResolver>();
-
+        var _urlResolver = ServiceLocator.Current.GetInstance<UrlResolver>();
+        var url = _urlResolver.GetUrl(contentReference);
+        Log("=> " + _urlResolver.GetType() + ": " + url);
 
         return UriSupport.AbsoluteUrlBySettings(
-            VirtualPathUtility.AppendTrailingSlash(_urlResolver.GetUrl(contentReference)) +
+            VirtualPathUtility.AppendTrailingSlash(url) +
             (thumbnail ? "thumbnail" : ""));
     }
 
