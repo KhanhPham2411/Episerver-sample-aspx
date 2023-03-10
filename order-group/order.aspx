@@ -56,7 +56,12 @@
         string marketName = Request.Form["marketName"];
 
         var orderGroup = orderRepository.Load<IPurchaseOrder>(orderGroupId);
-        orderGroup.MarketName = marketName;
+        orderGroup.Properties["CartRangeType"] = 20;
+        if (!String.IsNullOrEmpty(marketName)) 
+        {
+            orderGroup.MarketName = marketName;
+        }
+        
         var orderReference = orderRepository.Save(orderGroup);
 
         // load again for testing
@@ -90,7 +95,7 @@
     }
     void SearchOrder(object sender, EventArgs e)
     {
-       var result = OrderContext.Current.FindPurchaseOrdersByStatus(OrderStatus.InProgress);
+        var result = OrderContext.Current.FindPurchaseOrdersByStatus(OrderStatus.InProgress);
     }
 
     void Log(string text)
