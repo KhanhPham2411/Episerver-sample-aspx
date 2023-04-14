@@ -29,7 +29,7 @@
 <script language="C#" type="text/C#" runat="server">
     void AddMetaFieldCheckboxBoolean(object sender, EventArgs e)
     {
-        string name = "Attends";
+        string name = "DistributionChannnel3";
         string friendlyName = name;
         var typeName = MetaFieldType.CheckboxBoolean;
 
@@ -45,7 +45,8 @@
                 { McDataTypeAttribute.EnumEditable, true }
             };
             metaClass.CreateMetaField(name, friendlyName, typeName, attributes); // DeleteMetaField
-
+ 
+            metaClass = DataContext.Current.MetaModel.MetaClasses[OrganizationEntity.ClassName];
             using (var myEditScope = DataContext.Current.MetaModel.BeginEdit())
             {
                 metaClass.Fields[name].AccessLevel = AccessLevel.Development;
