@@ -19,7 +19,7 @@
 <%@ Import Namespace="Mediachase.Commerce.Customers" %>
 <%@ Import Namespace="Mediachase.BusinessFoundation.Data" %>
 <%@ Import Namespace="Mediachase.BusinessFoundation.Data.Meta.Management" %>
-
+<%@ Import Namespace="Mediachase.BusinessFoundation.MetaForm" %>
 
 <form id="form1" runat="server" enctype="multipart/form-data">
     <h2><asp:Button runat="server" OnClick="AddMetaFieldCheckboxBoolean" Text="Add MetaField Checkbox Boolean" /></h2>
@@ -27,11 +27,21 @@
 </form>
 
 <script language="C#" type="text/C#" runat="server">
+    void CreateMetaField(MetaClass metaClass, string metaFieldName, string metaFieldFriendlyName, string type)
+    {
+        if (metaClass.Fields[metaFieldName] == null)
+        {
+            metaClass.CreateMetaField(metaFieldName, metaFieldFriendlyName, type, true, "", new Mediachase.BusinessFoundation.Data.Meta.Management.AttributeCollection());
+            FormController.AddMetaPrimitive(metaClass.Name, "[MC_BaseForm]", metaFieldName);
+            FormController.AddMetaPrimitive(metaClass.Name, "[MC_ShortViewForm]", metaFieldName);
+            FormController.AddMetaPrimitive(metaClass.Name, "[MC_GeneralViewForm]", metaFieldName);
+        }
+    }
     void AddMetaFieldCheckboxBoolean(object sender, EventArgs e)
     {
-        string name = "DistributionChannnel3";
+        string name = "Test9";
         string friendlyName = name;
-        var typeName = MetaFieldType.CheckboxBoolean;
+        var typeName = MetaFieldType.LongText;
 
         var orgMetaClass = DataContext.Current.MetaModel.MetaClasses[OrganizationEntity.ClassName];
         var metaClass = orgMetaClass;
@@ -39,18 +49,11 @@
         var existingField = metaClass.Fields[name];
         if (existingField == null)
         {
-            var attributes = new Mediachase.BusinessFoundation.Data.Meta.Management.AttributeCollection
-            {
-                { McDataTypeAttribute.BooleanLabel, friendlyName },
-                { McDataTypeAttribute.EnumEditable, true }
-            };
-            metaClass.CreateMetaField(name, friendlyName, typeName, attributes); // DeleteMetaField
- 
-            metaClass = DataContext.Current.MetaModel.MetaClasses[OrganizationEntity.ClassName];
             using (var myEditScope = DataContext.Current.MetaModel.BeginEdit())
             {
-                metaClass.Fields[name].AccessLevel = AccessLevel.Development;
-                metaClass.Fields[name].Owner = "Development";
+                metaClass.CreateMetaField(name, friendlyName, typeName, new Mediachase.BusinessFoundation.Data.Meta.Management.AttributeCollection());
+                metaClass.Fields[name].AccessLevel = AccessLevel.Customization;
+                //metaClass.Fields[name].Owner = "Development";
 
                 myEditScope.SaveChanges();
             }
@@ -69,7 +72,7 @@
         string name = "Attends";
         string className = OrganizationEntity.ClassName;
         string typeName = MetaFieldType.Text;
-        
+
         string friendlyName = name;
         var orgMetaClass = DataContext.Current.MetaModel.MetaClasses[className];
         var metaClass = orgMetaClass;
@@ -89,12 +92,12 @@
 
     }
 
-    void AssignMetaField() 
-    {     
+    void AssignMetaField()
+    {
         string name = "Line3";
         string className = AddressEntity.ClassName;
         string typeName = MetaFieldType.Text;
-        
+
         string friendlyName = name;
         var entityMetaClass = DataContext.Current.MetaModel.MetaClasses[className];
 
@@ -103,16 +106,16 @@
         {
             using (var myEditScope = DataContext.Current.MetaModel.BeginEdit())
             {
-               IMetaFieldInstaller mcInstaller = MetaFieldType.GetInstaller(typeName);
+                IMetaFieldInstaller mcInstaller = MetaFieldType.GetInstaller(typeName);
 
-				if (mcInstaller != null)
-				{
-					// Assign Data Source
-					mcInstaller.AssignDataSource(existingField);
+                if (mcInstaller != null)
+                {
+                    // Assign Data Source
+                    mcInstaller.AssignDataSource(existingField);
 
-					// Assign Validators
-					mcInstaller.AssignValidators(existingField);
-				}
+                    // Assign Validators
+                    mcInstaller.AssignValidators(existingField);
+                }
 
                 myEditScope.SaveChanges();
             }
