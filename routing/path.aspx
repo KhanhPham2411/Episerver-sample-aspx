@@ -79,7 +79,7 @@
         {
             var mediaContent = GetMediaFromAsset(selectedItem);
 
-
+            Log(_urlResolver.GetType().ToString());
             var mediaUrl = _urlResolver.GetUrl(mediaContent.ContentLink);
 
             // return fallback URL - fulll image URL
