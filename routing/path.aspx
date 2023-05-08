@@ -81,13 +81,16 @@
 
             Log(_urlResolver.GetType().ToString());
             var mediaUrl = _urlResolver.GetUrl(mediaContent.ContentLink);
+            Log("mediaUrl: " + mediaUrl);
 
             // return fallback URL - fulll image URL
             if (!HasBlobProperty(mediaContent, propertyName))
             {
+                Log("=> This media don't have Blob");
                 return mediaUrl;
             }
 
+            Log("=> This media do have Blob");
             var builder = new UrlBuilder(mediaUrl);
             builder.Path = UriUtil.Combine(builder.Path, propertyName);
             return builder.ToString();
