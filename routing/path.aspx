@@ -63,7 +63,7 @@
     }
 
     bool HasBlobProperty(IContentImage mediaContent, string propName)
-    { 
+    {
         var _blobResolver = ServiceLocator.Current.GetInstance<IBlobResolver>();
 
         return _blobResolver.ResolveProperty(mediaContent, propName) != null;
@@ -82,6 +82,12 @@
             Log(_urlResolver.GetType().ToString());
             var mediaUrl = _urlResolver.GetUrl(mediaContent.ContentLink);
             Log("mediaUrl: " + mediaUrl);
+
+            var virtualPath = _urlResolver.GetVirtualPath(mediaContent.ContentLink, "en", null);
+            Log("virtualPath: " + virtualPath.VirtualPath);
+            Log("rootPath: " + virtualPath.DataTokens["rootPath"]);
+            var url = virtualPath.GetUrl();
+            Log("url: " + url);
 
             // return fallback URL - fulll image URL
             if (!HasBlobProperty(mediaContent, propertyName))
@@ -114,9 +120,8 @@
         //var result1 = _thumbnailUrlResolver.GetAbsoluteThumbnailUrl(entryContentLink, "thumbnail");
         //Log(result1);
 
-        var result = resolver.ToAbsolute(thumbnailUrl);
-        Log("absolute: " + result);
-
+        //var result = resolver.ToAbsolute(thumbnailUrl);
+        //Log("absolute: " + result);
     }
 
 
