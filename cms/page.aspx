@@ -25,12 +25,12 @@
 <%@ Import Namespace="Mediachase.Commerce.Orders" %>
 <%@ Import Namespace="EPiServer" %>
 <%@ Import Namespace="EPiServer.Core" %>
-<%@ Import Namespace="EPiServer.Reference.Commerce.Site.Features.Checkout.Pages" %>
+<%@ Import Namespace="EPiServer.Reference.Commerce.Site.Features.Start.Pages" %>
 
 
 <form id="form1" runat="server" enctype="multipart/form-data">
     <h2>
-        <input placeholder="pageId - 10" type="text" id="pageId" name="pageId" value="10"/>
+        <input placeholder="pageId - 293" type="text" id="pageId" name="pageId" value="293"/>
         <asp:Button runat="server" OnClick="LoadPage" Text="Load Page" />
     </h2>
    
@@ -43,8 +43,8 @@
         var contentRepository = ServiceLocator.Current.GetInstance<IContentRepository>();
         int pageId = int.Parse(Request.Form["pageId"]);
 
-        var page = contentRepository.Get<CheckoutPage>(new ContentReference(pageId));
-        Log("ProductMenuItems.Count:" + page.ProductMenuItems.Count);
+        var page = contentRepository.Get<SettingsPage>(new ContentReference(pageId));
+        Log("ProductMenuItems2.Count:" + page.MenuItems.Count);
         Log(page.Name);
     }
    

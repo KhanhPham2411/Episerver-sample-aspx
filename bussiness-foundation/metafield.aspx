@@ -22,11 +22,25 @@
 <%@ Import Namespace="Mediachase.BusinessFoundation.MetaForm" %>
 
 <form id="form1" runat="server" enctype="multipart/form-data">
+    <h2><asp:Button runat="server" OnClick="UpdateMetaClassTitle" Text="Update Meta Class Title" /></h2>
+
     <h2><asp:Button runat="server" OnClick="AddMetaFieldCheckboxBoolean" Text="Add MetaField Checkbox Boolean" /></h2>
     <h2><asp:Button runat="server" OnClick="DeleteMetaField" Text="Delete MetaField" /></h2>
+    <h2><asp:Button runat="server" OnClick="ChangeMetaField" Text="Change MetaField" /></h2>
 </form>
 
 <script language="C#" type="text/C#" runat="server">
+     void UpdateMetaClassTitle(object sender, EventArgs e)
+    { 
+        var metaClass = DataContext.Current.MetaModel.MetaClasses[ContactEntity.ClassName];
+        using (var myEditScope = DataContext.Current.MetaModel.BeginEdit())
+        {
+            metaClass.TitleFieldName = "Code";
+
+            myEditScope.SaveChanges();
+        }
+    }
+
     void CreateMetaField(MetaClass metaClass, string metaFieldName, string metaFieldFriendlyName, string type)
     {
         if (metaClass.Fields[metaFieldName] == null)
@@ -37,6 +51,7 @@
             FormController.AddMetaPrimitive(metaClass.Name, "[MC_GeneralViewForm]", metaFieldName);
         }
     }
+   
     void AddMetaFieldCheckboxBoolean(object sender, EventArgs e)
     {
         string name = "Test9";
@@ -45,6 +60,7 @@
 
         var orgMetaClass = DataContext.Current.MetaModel.MetaClasses[OrganizationEntity.ClassName];
         var metaClass = orgMetaClass;
+        
 
         var existingField = metaClass.Fields[name];
         if (existingField == null)
@@ -125,6 +141,34 @@
         else
         {
             Log(String.Format("Meta field {0} is not exist in meta class {1}", name, className));
+        }
+    }
+
+    void ChangeMetaField(object sender, EventArgs e)
+    {
+        string name = "Test2";
+        string friendlyName = name;
+        var typeName = MetaFieldType.LongText;
+
+        var metaClass = DataContext.Current.MetaModel.MetaClasses[ContactEntity.ClassName];
+
+
+        var existingField = metaClass.Fields[name];
+        if (existingField != null)
+        {
+            using (MetaClassManagerEditScope editScope = DataContext.Current.MetaModel.BeginEdit())
+            {
+                var field =  metaClass.Fields[name];
+                field.Attributes["MaxLength"] = 11;
+
+                editScope.SaveChanges();
+            }
+
+            Log(String.Format("Meta field {0} with attribute MaxLength changed", name, ContactEntity.ClassName));
+        }
+        else
+        {
+            Log(String.Format("Meta field {0} is not exist in meta class {1}", name, ContactEntity.ClassName));
         }
     }
 
