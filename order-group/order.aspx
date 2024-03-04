@@ -75,6 +75,8 @@
 
         var orderGroup = orderRepository.Load<IPurchaseOrder>(orderGroupId);
         Log(orderGroup.Name);
+        Log(orderGroup.GetFirstForm().CouponCodes.FirstOrDefault());
+        Log(orderGroup.GetFirstForm().Promotions[0].Name);
     }
     void CancelOrder(object sender, EventArgs e)
     {
