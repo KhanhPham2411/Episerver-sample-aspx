@@ -27,7 +27,7 @@
 <%@ Import Namespace="EPiServer.Commerce.Marketing" %>
 <%@ Import Namespace="EPiServer.DataAccess" %>
 <%@ Import Namespace="EPiServer.Core" %>
-
+<%@ Import Namespace="EPiServer.Commerce.Marketing.Promotions" %>
 
 <form id="form1" runat="server" enctype="multipart/form-data">
     <h2>
@@ -38,6 +38,23 @@
 
 <script language="C#" type="text/C#" runat="server">
     void UpdatePromotion(object sender, EventArgs e)
+    {
+        var contentRepository = ServiceLocator.Current.GetInstance<IContentRepository>();
+        int promotionId = int.Parse(Request.Form["promotionIdToUpdate"]);
+
+        var promotionContent = new ContentReference(promotionId);
+        var promotion = contentRepository.Get<PromotionData>(promotionContent).CreateWritableClone() as BuyQuantityGetFreeItems;
+        promotion.Condition.Items = new List<ContentReference>() { 
+            new ContentReference(10), 
+            new ContentReference(10),
+            new ContentReference(11)
+        };
+
+        contentRepository.Save(promotion, SaveAction.Publish, EPiServer.Security.AccessLevel.NoAccess);
+        Log("Promotion updated successfully");
+    }
+
+    void UpdatePromotionInclude(object sender, EventArgs e)
     {
         var contentRepository = ServiceLocator.Current.GetInstance<IContentRepository>();
         int promotionId = int.Parse(Request.Form["promotionIdToUpdate"]);
